@@ -18,6 +18,9 @@ export interface BottomSheetStyle {
     containerWhenExpandedFullscreen: ViewStyle;
     modal: ViewStyle;
     modalItems: ModalItemsStyle;
+    handle?: ViewStyle;
+    handleIndicator?: ViewStyle;
+    backdrop?: ViewStyle;
 }
 
 const isiPhoneModelWithNotch = (): boolean => {

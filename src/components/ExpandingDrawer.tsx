@@ -65,90 +65,61 @@ export const ExpandingDrawer = (props: ExpandingDrawerProps): ReactElement => {
     const containerStyle =
         isFullscreenContentValid && isOpen ? props.styles.containerWhenExpandedFullscreen : props.styles.container;
 
-    const renderMeasurementTree = useCallback((): ReactElement => {
-        return (
-            <View
-                style={{
-                    position: "absolute",
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    opacity: 0,
-                    zIndex: -1,
-                    pointerEvents: "none"
-                }}
-            >
-                {/* Measure smallContent */}
-                <View onLayout={onLayoutSmallContent} pointerEvents="box-none">
-                    {props.smallContent}
-                </View>
-                {/* Measure largeContent */}
-                <View onLayout={onLayoutLargeContent} pointerEvents="box-none">
-                    {props.largeContent}
-                </View>
-                {/* Measure fullscreenContent */}
-                {isFullscreenContentValid && (
-                    <View onLayout={onLayoutFullscreenContent} pointerEvents="box-none">
-                        {props.fullscreenContent}
-                    </View>
-                )}
-            </View>
-        );
-    }, [
-        props.smallContent,
-        props.largeContent,
-        props.fullscreenContent,
-        isFullscreenContentValid,
-        onLayoutSmallContent,
-        onLayoutLargeContent,
-        onLayoutFullscreenContent
-    ]);
-
-    // Calculate snap points based on measured heights
+    // Calculate snap points based on measured heights or use percentage fallbacks before measurements are complete
     const snapPoints = useMemo(() => {
-        const points: number[] = [];
+        const points: Array<number | string> = [];
 
         if (smallContentHeight > 0) {
             points.push(smallContentHeight + OFFSET_BOTTOM_SHEET);
         } else {
-            points.push(50 + OFFSET_BOTTOM_SHEET); // A reasonable default height
+            points.push(isSmallContentValid ? "15%" : 50 + OFFSET_BOTTOM_SHEET);
         }
 
-        // Calculate the height for the intermediate snap point (largeContent + smallContent)
         const combinedLargeContentHeight = smallContentHeight + largeContentOnlyHeight;
 
         if (isFullscreenContentValid) {
-            if (isLargeContentValid && largeContentOnlyHeight > 0) {
-                const intermediateSnapPoint = Math.min(halfScreen, combinedLargeContentHeight) + OFFSET_BOTTOM_SHEET;
-                if (intermediateSnapPoint > points[points.length - 1]) {
-                    points.push(intermediateSnapPoint);
+            if (isLargeContentValid) {
+                if (largeContentOnlyHeight > 0) {
+                    const intermediateSnapPoint =
+                        Math.min(halfScreen, combinedLargeContentHeight) + OFFSET_BOTTOM_SHEET;
+                    // Ensure intermediate is larger than collapsed
+                    points.push(
+                        typeof points[0] === "number" ? Math.max(intermediateSnapPoint, points[0] + 50) : "50%"
+                    );
+                } else {
+                    points.push("50%");
                 }
             }
 
             if (fullscreenContentOnlyHeight > 0) {
                 const fullScreenSnapPoint = screenHeight - OFFSET_BOTTOM_SHEET;
-                if (fullScreenSnapPoint > points[points.length - 1]) {
-                    points.push(fullScreenSnapPoint);
-                }
+                points.push(
+                    typeof points[points.length - 1] === "number"
+                        ? Math.max(fullScreenSnapPoint, (points[points.length - 1] as number) + 50)
+                        : "95%"
+                );
+            } else {
+                points.push("95%");
             }
         } else {
-            // If no fullscreenContent, the expanded state is the max of halfScreen or combined largeContent height
-            if (isLargeContentValid && largeContentOnlyHeight > 0) {
-                const expandedSnapPoint = Math.min(halfScreen, combinedLargeContentHeight) + OFFSET_BOTTOM_SHEET;
-                if (expandedSnapPoint > points[points.length - 1]) {
-                    points.push(expandedSnapPoint);
+            if (isLargeContentValid) {
+                if (largeContentOnlyHeight > 0) {
+                    const expandedSnapPoint = Math.min(halfScreen, combinedLargeContentHeight) + OFFSET_BOTTOM_SHEET;
+                    points.push(typeof points[0] === "number" ? Math.max(expandedSnapPoint, points[0] + 50) : "50%");
+                } else {
+                    points.push("50%");
                 }
             }
         }
 
-        // Ensure snap points are unique and sorted in ascending order
-        return Array.from(new Set(points)).sort((a, b) => (typeof a === "number" && typeof b === "number" ? a - b : 0));
+        return Array.from(new Set(points));
     }, [
         smallContentHeight,
         largeContentOnlyHeight,
         fullscreenContentOnlyHeight,
         isFullscreenContentValid,
         isLargeContentValid,
+        isSmallContentValid,
         halfScreen,
         screenHeight
     ]);
@@ -176,13 +147,11 @@ export const ExpandingDrawer = (props: ExpandingDrawerProps): ReactElement => {
         [props.onOpen, props.onClose, collapsedIndex]
     );
 
-    const hasMinimumMeasurements = !isSmallContentValid || smallContentHeight > 0;
+
 
     return (
         <View style={StyleSheet.absoluteFillObject} pointerEvents="box-none">
-            {renderMeasurementTree()}
-
-            {hasMinimumMeasurements && snapPoints.length > 0 && (
+            {snapPoints.length > 0 && (
                 <BottomSheet
                     ref={bottomSheetRef}
                     index={collapsedIndex} // Start at the collapsed state
@@ -193,6 +162,8 @@ export const ExpandingDrawer = (props: ExpandingDrawerProps): ReactElement => {
                     animateOnMount
                     backgroundStyle={containerStyle}
                     enableDynamicSizing={false}
+                    handleStyle={props.styles.handle}
+                    handleIndicatorStyle={props.styles.handleIndicator}
                 >
                     {/* Sticky header (smallContent) */}
                     <BottomSheetView onLayout={onLayoutSmallContent} style={!isSmallContentValid ? { height: 20 } : {}}>

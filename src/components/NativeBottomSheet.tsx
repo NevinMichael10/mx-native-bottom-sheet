@@ -1,9 +1,8 @@
-import { ReactElement, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { ReactElement, useCallback, useEffect, useRef } from "react";
 import {
     ActionSheetIOS,
     Appearance,
     Dimensions,
-    LayoutChangeEvent,
     Modal,
     Platform,
     Pressable,
@@ -34,7 +33,6 @@ let lastIndexRef = -1;
 
 export const NativeBottomSheet = (props: NativeBottomSheetProps): ReactElement => {
     const bottomSheetRef = useRef<BottomSheet>(null);
-    const [contentHeight, setContentHeight] = useState(0);
 
     const isAvailable = props.triggerAttribute && props.triggerAttribute.status === ValueStatus.Available;
     const isOpen =
@@ -98,20 +96,11 @@ export const NativeBottomSheet = (props: NativeBottomSheetProps): ReactElement =
                     opacity={0.3}
                     appearsOnIndex={0}
                     disappearsOnIndex={-1}
+                    style={[backdropProps.style, props.styles.backdrop]}
                 />
             </Pressable>
         ),
-        [close]
-    );
-
-    const onLayoutHandler = useCallback(
-        (event: LayoutChangeEvent) => {
-            const height = event.nativeEvent.layout.height;
-            if (height > 0 && height !== contentHeight) {
-                setContentHeight(height);
-            }
-        },
-        [contentHeight]
+        [close, props.styles.backdrop]
     );
 
     const actionHandler = useCallback(
@@ -189,18 +178,6 @@ export const NativeBottomSheet = (props: NativeBottomSheetProps): ReactElement =
         [isAvailable, props.triggerAttribute]
     );
 
-    const snapPoints = useMemo(() => {
-        if (contentHeight === 0) {
-            return [1]; // During measurement
-        }
-
-        // Use actual measured height, cap at 90% screen
-        const maxHeight = Dimensions.get("screen").height * 0.9;
-
-        const snapHeight = Math.min(contentHeight, maxHeight);
-        return [snapHeight];
-    }, [contentHeight]);
-
     if (props.useNative && Platform.OS === "ios") {
         return <View></View>;
     }
@@ -209,8 +186,9 @@ export const NativeBottomSheet = (props: NativeBottomSheetProps): ReactElement =
         <Modal onRequestClose={close} transparent visible={isOpen}>
             <BottomSheet
                 ref={bottomSheetRef}
-                index={isOpen && contentHeight > 0 ? 0 : -1}
-                snapPoints={snapPoints}
+                index={isOpen ? 0 : -1}
+                enableDynamicSizing
+                maxDynamicContentSize={Dimensions.get("screen").height * 0.9}
                 enablePanDownToClose
                 animateOnMount={false}
                 onClose={() => handleSheetChanges(-1)}
@@ -218,10 +196,10 @@ export const NativeBottomSheet = (props: NativeBottomSheetProps): ReactElement =
                 style={getContainerStyle()}
                 backdropComponent={renderBackdrop}
                 backgroundStyle={props.styles.container}
-                handleComponent={null}
-                handleStyle={{ display: "none" }}
+                handleStyle={props.styles.handle}
+                handleIndicatorStyle={props.styles.handleIndicator}
             >
-                <BottomSheetScrollView contentContainerStyle={{ paddingBottom: 16 }} onLayout={onLayoutHandler}>
+                <BottomSheetScrollView contentContainerStyle={{ paddingBottom: 16 }}>
                     {props.itemsBasic.map((item, index) => renderItem(item, index))}
                 </BottomSheetScrollView>
             </BottomSheet>

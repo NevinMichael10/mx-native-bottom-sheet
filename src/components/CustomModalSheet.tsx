@@ -1,5 +1,6 @@
-import { ReactElement, ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Dimensions, InteractionManager, LayoutChangeEvent, Modal, Pressable } from "react-native";
+import { ReactElement, ReactNode, useCallback, useEffect, useRef, useState } from "react";
+import { Dimensions, InteractionManager, Modal, Pressable } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import BottomSheet, {
     BottomSheetBackdrop,
     BottomSheetBackdropProps,
@@ -18,7 +19,6 @@ let lastIndexRef = -1;
 
 export const CustomModalSheet = (props: CustomModalSheetProps): ReactElement => {
     const bottomSheetRef = useRef<BottomSheet>(null);
-    const [contentHeight, setContentHeight] = useState(0);
     const [currentStatus, setCurrentStatus] = useState(false);
 
     const isAvailable = props.triggerAttribute && props.triggerAttribute.status === ValueStatus.Available;
@@ -27,16 +27,6 @@ export const CustomModalSheet = (props: CustomModalSheetProps): ReactElement => 
         props.triggerAttribute &&
         props.triggerAttribute.status === ValueStatus.Available &&
         props.triggerAttribute.value;
-
-    const onContentLayoutHandler = useCallback(
-        (event: LayoutChangeEvent): void => {
-            const layoutHeight = event.nativeEvent.layout.height;
-            if (layoutHeight > 0 && layoutHeight !== contentHeight) {
-                setContentHeight(layoutHeight);
-            }
-        },
-        [contentHeight]
-    );
 
     const close = useCallback(() => {
         bottomSheetRef.current?.close();
@@ -51,22 +41,12 @@ export const CustomModalSheet = (props: CustomModalSheetProps): ReactElement => 
                     opacity={0.3}
                     appearsOnIndex={0}
                     disappearsOnIndex={-1}
+                    style={[backdropProps.style, props.styles.backdrop]}
                 />
             </Pressable>
         ),
-        [close]
+        [close, props.styles.backdrop]
     );
-
-    const snapPoints = useMemo(() => {
-        if (contentHeight === 0) {
-            return [1]; // During measurement
-        }
-
-        // Use actual measured content height, cap at 90% screen
-        const maxHeight = Dimensions.get("screen").height * 0.9;
-        const snapHeight = Math.min(contentHeight, maxHeight);
-        return [snapHeight];
-    }, [contentHeight]);
 
     const handleSheetChanges = useCallback(
         (index: number) => {
@@ -102,27 +82,26 @@ export const CustomModalSheet = (props: CustomModalSheetProps): ReactElement => 
 
     return (
         <Modal onRequestClose={close} transparent visible={!!isOpen}>
-            <BottomSheet
-                ref={bottomSheetRef}
-                index={isOpen ? 0 : -1}
-                snapPoints={snapPoints}
-                onClose={() => handleSheetChanges(-1)}
-                onChange={handleSheetChanges}
-                backdropComponent={renderBackdrop}
-                style={[props.styles.modal]}
-                backgroundStyle={props.styles.container}
-                enablePanDownToClose={false}
-                handleComponent={null}
-                handleStyle={{ display: "none" }}
-            >
-                <BottomSheetScrollView
-                    style={[{ flex: 1 }]}
-                    contentContainerStyle={{ paddingBottom: 16 }}
-                    onLayout={onContentLayoutHandler}
+            <GestureHandlerRootView style={{ flex: 1 }}>
+                <BottomSheet
+                    ref={bottomSheetRef}
+                    index={isOpen ? 0 : -1}
+                    enableDynamicSizing
+                    maxDynamicContentSize={Dimensions.get("screen").height * 0.9}
+                    onClose={() => handleSheetChanges(-1)}
+                    onChange={handleSheetChanges}
+                    backdropComponent={renderBackdrop}
+                    style={[props.styles.modal]}
+                    backgroundStyle={props.styles.container}
+                    enablePanDownToClose={true}
+                    handleStyle={props.styles.handle}
+                    handleIndicatorStyle={props.styles.handleIndicator}
                 >
-                    {props.content}
-                </BottomSheetScrollView>
-            </BottomSheet>
+                    <BottomSheetScrollView contentContainerStyle={{ paddingBottom: 16 }}>
+                        {props.content}
+                    </BottomSheetScrollView>
+                </BottomSheet>
+            </GestureHandlerRootView>
         </Modal>
     );
 };
