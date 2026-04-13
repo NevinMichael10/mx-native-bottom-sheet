@@ -4,7 +4,7 @@
         xmlns="http://www.mendix.com/widget/1.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.mendix.com/widget/1.0/ ../node_modules/mendix/custom_widget.xsd">
     <name>Bottom Sheet</name>
-    <description>My widget description</description>
+    <description>Widget to handle bottom sheet</description>
     <icon/>
     <properties>
         <propertyGroup caption="General">
