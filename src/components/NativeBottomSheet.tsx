@@ -115,7 +115,7 @@ export const NativeBottomSheet = (props: NativeBottomSheetProps): ReactElement =
         [props.itemsBasic, props.triggerAttribute]
     );
 
-    const buttonContainerStyle = { ...props.styles.modalItems?.container } as ModalItemContainerStyle;
+    const buttonContainerStyle = { ...(props.styles.modalItems?.container || {}) } as ModalItemContainerStyle;
 
     const getButtonStyle = () => {
         if (props.useNative) {
@@ -134,7 +134,7 @@ export const NativeBottomSheet = (props: NativeBottomSheetProps): ReactElement =
                     onPress={() => actionHandler(index)}
                 >
                     <View style={[{ flex: 1, paddingHorizontal: 16 }, getButtonStyle()]}>
-                        <Text style={props.styles.modalItems[item.styleClass]}>{item.caption}</Text>
+                        <Text style={props.styles.modalItems?.[item.styleClass]}>{item.caption}</Text>
                     </View>
                 </TouchableHighlight>
             );

@@ -157,20 +157,18 @@ export function getProperties(
     return defaultProperties;
 }
 
-// export function check(_values: BottomSheetPreviewProps): Problem[] {
-//     const errors: Problem[] = [];
-//     // Add errors to the above array to throw errors in Studio and Studio Pro.
-//     /* Example
-//     if (values.myProperty !== "custom") {
-//         errors.push({
-//             property: `myProperty`,
-//             message: `The value of 'myProperty' is different of 'custom'.`,
-//             url: "https://github.com/myrepo/mywidget"
-//         });
-//     }
-//     */
-//     return errors;
-// }
+export function check(values: BottomSheetPreviewProps): Problem[] {
+    const errors: Problem[] = [];
+
+    if (values.type === "modal" && !values.triggerAttribute) {
+        errors.push({
+            property: "triggerAttribute",
+            message: "A Trigger attribute is required when the Bottom Sheet type is set to 'modal'."
+        });
+    }
+
+    return errors;
+}
 
 // export function getPreview(values: BottomSheetPreviewProps, isDarkMode: boolean, version: number[]): PreviewProps {
 //     // Customize your pluggable widget appearance for Studio Pro.
