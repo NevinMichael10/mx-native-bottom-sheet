@@ -32,6 +32,8 @@ export interface BottomSheetProps<Style> {
     modalRendering: ModalRenderingEnum;
     itemsBasic: ItemsBasicType[];
     nativeImplementation: boolean;
+    useCustomHandle: boolean;
+    customHandle?: ReactNode;
     smallContent?: ReactNode;
     largeContent?: ReactNode;
     showFullscreenContent: boolean;
@@ -56,6 +58,8 @@ export interface BottomSheetPreviewProps {
     modalRendering: ModalRenderingEnum;
     itemsBasic: ItemsBasicPreviewType[];
     nativeImplementation: boolean;
+    useCustomHandle: boolean;
+    customHandle: { widgetCount: number; renderer: ComponentType<{ children: ReactNode; caption?: string }> };
     smallContent: { widgetCount: number; renderer: ComponentType<{ children: ReactNode; caption?: string }> };
     largeContent: { widgetCount: number; renderer: ComponentType<{ children: ReactNode; caption?: string }> };
     showFullscreenContent: boolean;

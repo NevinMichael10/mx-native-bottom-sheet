@@ -12,7 +12,7 @@ export function BottomSheet(props: BottomSheetProps<BottomSheetStyle>): ReactEle
 
     if (props.type === "modal" && props.modalRendering === "custom") {
         return (
-            <CustomModalSheet triggerAttribute={props.triggerAttribute} content={props.largeContent} styles={styles} />
+            <CustomModalSheet triggerAttribute={props.triggerAttribute} content={props.largeContent} styles={styles} customHandle={props.useCustomHandle ? props.customHandle : undefined} />
         );
     }
     if (props.type === "modal" && props.modalRendering === "basic") {
@@ -23,6 +23,7 @@ export function BottomSheet(props: BottomSheetProps<BottomSheetStyle>): ReactEle
                 triggerAttribute={props.triggerAttribute}
                 useNative={props.nativeImplementation}
                 styles={styles}
+                customHandle={props.useCustomHandle ? props.customHandle : undefined}
             />
         );
     }
@@ -35,6 +36,7 @@ export function BottomSheet(props: BottomSheetProps<BottomSheetStyle>): ReactEle
                 onOpen={() => executeAction(props.onOpen)}
                 onClose={() => executeAction(props.onClose)}
                 styles={styles}
+                customHandle={props.useCustomHandle ? props.customHandle : undefined}
             />
         );
     }

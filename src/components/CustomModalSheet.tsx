@@ -1,5 +1,5 @@
-import { ReactElement, ReactNode, useCallback, useEffect, useRef, useState } from "react";
-import { Dimensions, InteractionManager, Modal, Pressable } from "react-native";
+import { Children, ReactElement, ReactNode, useCallback, useEffect, useRef, useState } from "react";
+import { Dimensions, InteractionManager, Modal, Pressable, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import BottomSheet, {
     BottomSheetBackdrop,
@@ -13,6 +13,7 @@ interface CustomModalSheetProps {
     triggerAttribute?: EditableValue<boolean>;
     content?: ReactNode;
     styles: BottomSheetStyle;
+    customHandle?: ReactNode;
 }
 
 let lastIndexRef = -1;
@@ -80,6 +81,14 @@ export const CustomModalSheet = (props: CustomModalSheetProps): ReactElement => 
         }
     }, [props.triggerAttribute, currentStatus, isAvailable]);
 
+    const hasCustomHandle = Children.count(props.customHandle) > 0;
+    const renderHandle = useCallback(
+        (handleProps: any) => {
+            return <View {...handleProps}>{props.customHandle}</View>;
+        },
+        [props.customHandle]
+    );
+
     return (
         <Modal onRequestClose={close} transparent visible={!!isOpen}>
             <GestureHandlerRootView style={{ flex: 1 }}>
@@ -96,6 +105,7 @@ export const CustomModalSheet = (props: CustomModalSheetProps): ReactElement => 
                     enablePanDownToClose={true}
                     handleStyle={props.styles.handle}
                     handleIndicatorStyle={props.styles.handleIndicator}
+                    handleComponent={hasCustomHandle ? renderHandle : undefined}
                 >
                     <BottomSheetScrollView contentContainerStyle={{ paddingBottom: 16 }}>
                         {props.content}

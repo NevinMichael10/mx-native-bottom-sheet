@@ -63,6 +63,14 @@
                     <caption>Native iOS variant</caption>
                     <description>If set to Yes, on iOS the native Action sheet is shown. If set to No, a uniform version will be shown on iOS, similar to Android.</description>
                 </property>
+                <property key="useCustomHandle" type="boolean" defaultValue="false">
+                    <caption>Use custom handle</caption>
+                    <description>If true, you can model a custom handle.</description>
+                </property>
+                <property key="customHandle" type="widgets" required="false">
+                    <caption>Custom handle</caption>
+                    <description>Provide a custom top handle instead of the default indicator. Leave empty to use the default indicator.</description>
+                </property>
                 <property key="smallContent" type="widgets" required="false">
                     <caption>Always visible</caption>
                     <description />

@@ -10,6 +10,7 @@ interface ExpandingDrawerProps {
     onOpen?: () => void;
     onClose?: () => void;
     styles: BottomSheetStyle;
+    customHandle?: ReactNode;
 }
 let lastIndexRef = -1;
 
@@ -147,7 +148,13 @@ export const ExpandingDrawer = (props: ExpandingDrawerProps): ReactElement => {
         [props.onOpen, props.onClose, collapsedIndex]
     );
 
-
+    const hasCustomHandle = Children.count(props.customHandle) > 0;
+    const renderHandle = useCallback(
+        (handleProps: any) => {
+            return <View {...handleProps}>{props.customHandle}</View>;
+        },
+        [props.customHandle]
+    );
 
     return (
         <View style={StyleSheet.absoluteFillObject} pointerEvents="box-none">
@@ -164,6 +171,7 @@ export const ExpandingDrawer = (props: ExpandingDrawerProps): ReactElement => {
                     enableDynamicSizing={false}
                     handleStyle={props.styles.handle}
                     handleIndicatorStyle={props.styles.handleIndicator}
+                    handleComponent={hasCustomHandle ? renderHandle : undefined}
                 >
                     {/* Sticky header (smallContent) */}
                     <BottomSheetView onLayout={onLayoutSmallContent} style={!isSmallContentValid ? { height: 20 } : {}}>

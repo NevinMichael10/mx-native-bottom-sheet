@@ -128,6 +128,10 @@ export function getProperties(
     values: BottomSheetPreviewProps,
     defaultProperties: Properties /* , target: Platform*/
 ): Properties {
+    if (!values.useCustomHandle) {
+        hidePropertyIn(defaultProperties, "customHandle");
+    }
+
     if (values.type === "modal") {
         if (values.modalRendering === "basic") {
             hidePropertyIn(defaultProperties, "largeContent");

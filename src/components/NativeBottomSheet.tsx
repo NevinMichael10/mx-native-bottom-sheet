@@ -1,4 +1,4 @@
-import { ReactElement, useCallback, useEffect, useRef } from "react";
+import { Children, ReactElement, ReactNode, useCallback, useEffect, useRef } from "react";
 import {
     ActionSheetIOS,
     Appearance,
@@ -27,6 +27,7 @@ interface NativeBottomSheetProps {
     itemsBasic: ItemsBasicType[];
     useNative: boolean;
     styles: BottomSheetStyle;
+    customHandle?: ReactNode;
 }
 
 let lastIndexRef = -1;
@@ -178,6 +179,14 @@ export const NativeBottomSheet = (props: NativeBottomSheetProps): ReactElement =
         [isAvailable, props.triggerAttribute]
     );
 
+    const hasCustomHandle = Children.count(props.customHandle) > 0;
+    const renderHandle = useCallback(
+        (handleProps: any) => {
+            return <View {...handleProps}>{props.customHandle}</View>;
+        },
+        [props.customHandle]
+    );
+
     if (props.useNative && Platform.OS === "ios") {
         return <View></View>;
     }
@@ -198,6 +207,7 @@ export const NativeBottomSheet = (props: NativeBottomSheetProps): ReactElement =
                 backgroundStyle={props.styles.container}
                 handleStyle={props.styles.handle}
                 handleIndicatorStyle={props.styles.handleIndicator}
+                handleComponent={hasCustomHandle ? renderHandle : undefined}
             >
                 <BottomSheetScrollView contentContainerStyle={{ paddingBottom: 16 }}>
                     {props.itemsBasic.map((item, index) => renderItem(item, index))}
