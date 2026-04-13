@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<widget id="strebentechnik.bottomsheet.BottomSheet" pluginWidget="true" needsEntityContext="true" offlineCapable="true"
+        supportedPlatform="Native"
+        xmlns="http://www.mendix.com/widget/1.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.mendix.com/widget/1.0/ ../node_modules/mendix/custom_widget.xsd">
+    <name>Bottom Sheet</name>
+    <description>My widget description</description>
+    <icon/>
+    <properties>
+        <propertyGroup caption="General">
+            <propertyGroup caption="General">
+                <property key="type" type="enumeration" defaultValue="modal">
+                    <caption>Type</caption>
+                    <description>Modal: a modal menu which is visible and triggered based on the trigger attribute. Expanding: a collapsed surface that can be expanded manually by the user.</description>
+                    <enumerationValues>
+                        <enumerationValue key="modal">Modal</enumerationValue>
+                        <enumerationValue key="expanding">Expanding</enumerationValue>
+                    </enumerationValues>
+                </property>
+                <property key="triggerAttribute" type="attribute" required="false">
+                    <caption>Trigger attribute</caption>
+                    <description>Defines if the modal bottom sheet is visible or not. Initially this value should be false. When set to true, the bottom sheet will be shown. When the bottom sheet is hidden, the trigger attribute value is set to false.</description>
+                    <attributeTypes>
+                        <attributeType name="Boolean"/>
+                    </attributeTypes>
+                </property>
+                <property key="modalRendering" type="enumeration" defaultValue="basic">
+                    <caption>Render</caption>
+                    <description>Basic: creates the menu based on the configured options. Custom: free to model menu.</description>
+                    <enumerationValues>
+                        <enumerationValue key="basic">Basic</enumerationValue>
+                        <enumerationValue key="custom">Custom</enumerationValue>
+                    </enumerationValues>
+                </property>
+                <property key="itemsBasic" type="object" isList="true" required="false">
+                    <caption>Items</caption>
+                    <description />
+                    <properties>
+                        <property key="caption" type="string">
+                            <caption>Caption</caption>
+                            <category>General</category>
+                            <description />
+                        </property>
+                        <property key="action" type="action" required="false">
+                            <caption>Action</caption>
+                            <category>General</category>
+                            <description />
+                        </property>
+                        <property key="styleClass" type="enumeration" defaultValue="defaultStyle">
+                            <caption>Style</caption>
+                            <category>General</category>
+                            <description>Styles are not supported on iOS when Native iOS variant is selected.</description>
+                            <enumerationValues>
+                                <enumerationValue key="defaultStyle">Default</enumerationValue>
+                                <enumerationValue key="primaryStyle">Primary</enumerationValue>
+                                <enumerationValue key="dangerStyle">Danger</enumerationValue>
+                                <enumerationValue key="customStyle">Custom</enumerationValue>
+                            </enumerationValues>
+                        </property>
+                    </properties>
+                </property>
+                <property key="nativeImplementation" type="boolean" defaultValue="true">
+                    <caption>Native iOS variant</caption>
+                    <description>If set to Yes, on iOS the native Action sheet is shown. If set to No, a uniform version will be shown on iOS, similar to Android.</description>
+                </property>
+                <property key="smallContent" type="widgets" required="false">
+                    <caption>Always visible</caption>
+                    <description />
+                </property>
+                <property key="largeContent" type="widgets" required="false">
+                    <caption>Visible on first drag</caption>
+                    <description />
+                </property>
+                <property key="showFullscreenContent" type="boolean" defaultValue="true">
+                    <caption>Enable full screen</caption>
+                    <description />
+                </property>
+                <property key="fullscreenContent" type="widgets" required="false">
+                    <caption>Visible on drag to top of screen</caption>
+                    <description />
+                </property>
+                <property key="onOpen" type="action" required="false">
+                    <caption>On open</caption>
+                    <description />
+                </property>
+                <property key="onClose" type="action" required="false">
+                    <caption>On close</caption>
+                    <description />
+                </property>
+            </propertyGroup>
+            <propertyGroup caption="Common">
+                <systemProperty key="Name"/>
+                <systemProperty key="Visibility" />
+            </propertyGroup>
+        </propertyGroup>
+    </properties>
+</widget>
