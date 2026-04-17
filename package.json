@@ -2,7 +2,7 @@
   "name": "bottomsheet",
   "widgetName": "BottomSheet",
   "version": "1.0.0",
-  "description": "My widget description",
+  "description": "Widget for bottom sheet",
   "copyright": "© Mendix Technology BV 2026. All rights reserved.",
   "author": "Nevin",
   "engines": {
