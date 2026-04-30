@@ -34,18 +34,23 @@ export const CustomModalSheet = (props: CustomModalSheetProps): ReactElement => 
     }, []);
 
     const renderBackdrop = useCallback(
-        (backdropProps: BottomSheetBackdropProps) => (
-            <Pressable style={{ flex: 1 }} onPress={close}>
-                <BottomSheetBackdrop
-                    {...backdropProps}
-                    pressBehavior={"close"}
-                    opacity={0.3}
-                    appearsOnIndex={0}
-                    disappearsOnIndex={-1}
-                    style={[backdropProps.style, props.styles.backdrop]}
-                />
-            </Pressable>
-        ),
+        (backdropProps: BottomSheetBackdropProps) => {
+            const { opacity, ...backdropStyle } = props.styles.backdrop || {};
+            const backdropOpacity = typeof opacity === "number" ? opacity : 0.3;
+
+            return (
+                <Pressable style={{ flex: 1 }} onPress={close}>
+                    <BottomSheetBackdrop
+                        {...backdropProps}
+                        pressBehavior={"close"}
+                        opacity={backdropOpacity}
+                        appearsOnIndex={0}
+                        disappearsOnIndex={-1}
+                        style={[backdropProps.style, backdropStyle]}
+                    />
+                </Pressable>
+            );
+        },
         [close, props.styles.backdrop]
     );
 
